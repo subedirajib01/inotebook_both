@@ -14,6 +14,7 @@ function App() {
     <>
     <Router>
       <Navbar/>
+      <div className='container'>
       <Routes>
         <Route path="/" element={
           <Home />
@@ -24,6 +25,7 @@ function App() {
           </NoteState>
           } />
       </Routes>
+      </div>
         </Router>
     </>
   )
