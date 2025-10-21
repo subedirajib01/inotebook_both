@@ -17,7 +17,9 @@ function App() {
       <div className='container'>
       <Routes>
         <Route path="/" element={
-          <Home />
+          <NoteState>
+            <Home />
+          </NoteState>
           } />
         <Route path="/about" element={
           <NoteState>
