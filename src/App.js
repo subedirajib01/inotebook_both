@@ -8,12 +8,14 @@ import Navbar from './Components/Navbar';
 import Home from './Components/Home';
 import About from './Components/About';
 import NoteState from './Context/notes/NoteState';
+import Alert from './Components/Alert';
 
 function App() {
   return (
     <>
     <Router>
       <Navbar/>
+      <Alert message="Hello ! Ji kya haal chal " />
       <div className='container'>
       <Routes>
         <Route path="/" element={
