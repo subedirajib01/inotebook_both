@@ -1,12 +1,12 @@
-const connectToMongo = require("./db");
 const express = require("express");
-
-connectToMongo();
-
+const connectToMongo = require("./db");
 const app = express();
+const cors =require('cors')
+connectToMongo();
 const port = 5000;
 
 // Middleware to parse JSON bodies
+app.use(cors());
 app.use(express.json());
 
 //Available Routes
