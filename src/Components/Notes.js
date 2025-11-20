@@ -5,31 +5,36 @@ import noteContext from '../Context/notes/noteContext';
 
 const Notes = () => {
 const context = useContext(noteContext);
-    const { notes, getNotes} = context;
-    const [note, setNote] = useState({ etitle: "", edescription: "", etag: "" });
+    const { notes, getNotes,editNote} = context;
+    
+    const ref=useRef(null);
+    const refClose=useRef(null);
+
+    const [note, setNote] = useState({ id:"",etitle: "", edescription: "", etag: "" });
+    
     useEffect(()=>{
         getNotes()
         // eslint-disable-next-line
     },[])
+
     const updateNote=(currentNote)=>{
-        ref.current.click();
-        setNote({
+    setNote({
     etitle: currentNote.title || "",
     edescription: currentNote.description || "",
-    etag: currentNote.tag || ""
+    etag: currentNote.tag || "",
+    id:currentNote._id
 });
-
+    ref.current.click();
     }
+
     const handleClick = (e) => {
-        console.log("Updating the Note....",note)
-        e.preventDefault();
+        editNote(note.id,note.etitle,note.edescription,note.etag);
+        refClose.current.click();
     }
 
     const onChange = (e) => {
         setNote({ ...note, [e.target.name]: e.target.value });
     }
-
-    const ref=useRef(null);
 
     return (
         <>
@@ -53,7 +58,7 @@ const context = useContext(noteContext);
                     <input type="text" className="form-control"
                         id="etitle" name="etitle"
                         value={note.etitle}
-                        onChange={onChange} />
+                        onChange={onChange} minLength={5} required/>
                 </div>
 
                 <div className="mb-3">
@@ -61,7 +66,7 @@ const context = useContext(noteContext);
                     <input type="text" className="form-control"
                         id="edescription" name="edescription"
                         value={note.edescription}
-                        onChange={onChange} />
+                        onChange={onChange} minLength={5} required/>
                 </div>
 
                 <div className="mb-3">
@@ -77,8 +82,8 @@ const context = useContext(noteContext);
             </form>
         </div>
         <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" className="btn btn-primary" onClick={handleClick}>Update Note</button>
+        <button ref={refClose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button disabled={note.etitle.length<5 || note.edescription.length<5} type="button" className="btn btn-primary" onClick={handleClick}>Update Note</button>
         </div>
     </div>
     </div>
@@ -87,6 +92,9 @@ const context = useContext(noteContext);
 
     <div className="row my-3">
         <h1>Your Notes</h1>
+        <div className="container mx-2">
+        {notes.length===0 && 'No notes to display'}
+        </div>
         {notes.map((note)=>{
             return <Noteitem key={note._id} updateNote={updateNote} note={note}/>
         })}
