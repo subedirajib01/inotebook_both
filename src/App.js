@@ -11,18 +11,30 @@ import NoteState from './Context/notes/NoteState';
 import Alert from './Components/Alert';
 import Login from './Components/Login';
 import Signup from './Components/Signup';
+import { useState } from 'react';
 
 function App() {
+  const[alert,setAlert]=useState(null);
+  const showAlert=(message,type)=>{
+    setAlert({
+      msg:message,
+      type:type
+    })
+    setTimeout(()=>{
+      setAlert(null);
+    },3000)
+}
+
   return (
     <>
     <Router>
       <Navbar/>
-      <Alert message="Hello ! Ji kya haal chal " />
+      <Alert alert={alert}/>
       <div className='container'>
       <Routes>
         <Route path="/" element={
           <NoteState>
-            <Home />
+            <Home showAlert={showAlert} />
           </NoteState>
           } />
         <Route path="/about" element={
@@ -32,12 +44,12 @@ function App() {
           } />
         <Route path="/login" element={
           // <NoteState>
-            <Login />
+            <Login showAlert={showAlert}/>
           // </NoteState>
           } />
         <Route path="/signup" element={
           // <NoteState>
-            <Signup />
+            <Signup showAlert={showAlert}/>
           // </NoteState>
           } />
       </Routes>

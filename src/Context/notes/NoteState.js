@@ -18,7 +18,7 @@ const getNotes = async () => {
     }
     });
     const json = await response.json() 
-    setNotes(json)
+    setNotes(json);
 }
 
   // Add a Note
@@ -34,7 +34,7 @@ const getNotes = async () => {
         body: JSON.stringify({title, description, tag})
     });
     const note= await response.json();
-    setNotes(notes.concat(note))
+    setNotes(notes.concat(note));
 }
 
 
@@ -49,7 +49,7 @@ const getNotes = async () => {
     });
     const json =response.json(); 
     const newNotes = notes.filter((note) => { return note._id !== id })
-    setNotes(newNotes)
+    setNotes(newNotes);
     }
 
 
