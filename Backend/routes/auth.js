@@ -16,10 +16,11 @@ router.post('/createuser', [
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Enter a valid password').isLength({ min: 5 })
 ], async (req, res) => {
+    let success=false;
     const errors = validationResult(req);
     // if there are validation errors, return bad request and the errors
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ success, errors: errors.array() });
     }
 
     // Create the user and handle unique email / DB errors
@@ -27,7 +28,7 @@ router.post('/createuser', [
     try {
         let user = await User.findOne({email:req.body.email})
         if (user){
-            return res.status(400).json({error:"Sorry a user with this email already exists"}) 
+            return res.status(400).json({success,error:"Sorry a user with this email already exists"}) 
         }
 
         const salt=await bcrypt.genSalt(10);
@@ -46,13 +47,14 @@ router.post('/createuser', [
             
         }
         const authtoken=jwt.sign(data,JWT_SECRET);
-        res.json({authtoken:authtoken})
+        success=true;
+        res.json({success,authtoken:authtoken})
     } 
     catch (err) {
         console.error('Error creating user:', err);
         // If it's a duplicate key error from Mongo (unique email), send a 400 with a helpful message
         if (err && err.code === 11000) {
-            return res.status(400).json({ error: 'Please enter a unique value for email' ,message:err.message});
+            return res.status(400).json({success, error: 'Please enter a unique value for email' ,message:err.message});
         }
         return res.status(500).json({ error: 'Server error' });
     }
@@ -65,6 +67,7 @@ router.post('/login', [
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Password cannot be blank').exists(),
 ], async (req, res) => {
+    let success=false;
     const errors = validationResult(req);
     // if there are validation errors, return bad request and the errors
     if (!errors.isEmpty()) {
@@ -78,7 +81,8 @@ const {email,password}=req.body;
         }
         const passwordCompare=await bcrypt.compare(password,user.password);
         if(!passwordCompare){
-            return res.status(400).json({error:"Please try to login with correct credentials"});
+            success=false;
+            return res.status(400).json({success,error:"Please try to login with correct credentials"});
         }
     const data={
             user:{
@@ -86,8 +90,8 @@ const {email,password}=req.body;
             }
         }
         const authtoken=jwt.sign(data,JWT_SECRET);
-
-        res.json({authtoken})
+        success=true;
+        res.json({success,authtoken})
     }
     catch (err) {
         console.error('Error creating user:', err);
