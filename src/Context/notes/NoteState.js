@@ -5,7 +5,7 @@ const NoteState = (props) => {
     const host = "http://localhost:5000"
     const notesInitial = []
     const [notes, setNotes] = useState(notesInitial)
-    const authToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjkxZGFjM2IwZjA3ZDJhMzkzMjU2ZGM0In0sImlhdCI6MTc2MzU1MjMxNX0.dE0Ghx0wId4SOcYVxX4aQ9pzoKK1GSbpdEkxRFbyqDY"
+    // const authToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjkxZGFjM2IwZjA3ZDJhMzkzMjU2ZGM0In0sImlhdCI6MTc2MzU1MjMxNX0.dE0Ghx0wId4SOcYVxX4aQ9pzoKK1GSbpdEkxRFbyqDY"
 
   // Get all Notes
 const getNotes = async () => {
@@ -14,7 +14,7 @@ const getNotes = async () => {
     method: 'GET',
     headers: {
         'Content-Type': 'application/json',
-        "auth-token":authToken
+        "auth-token":localStorage.getItem('token')
     }
     });
     const json = await response.json() 
@@ -29,7 +29,7 @@ const getNotes = async () => {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
-        "auth-token":authToken
+        "auth-token":localStorage.getItem('token')
         },
         body: JSON.stringify({title, description, tag})
     });
@@ -37,21 +37,21 @@ const getNotes = async () => {
     setNotes(notes.concat(note));
 }
 
-
   // Delete a Note
     const deleteNote = async (id) => {
         const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
         method: 'DELETE',
         headers: {
         'Content-Type': 'application/json',
-        "auth-token":authToken
+        "auth-token":localStorage.getItem('token')
         },
     });
     const json =response.json(); 
+    console.log(json);
+
     const newNotes = notes.filter((note) => { return note._id !== id })
     setNotes(newNotes);
     }
-
 
 //   Edit a Note
     const editNote = async (id, title, description, tag) => {
@@ -59,13 +59,12 @@ const getNotes = async () => {
         method: 'PUT',
         headers: {
         'Content-Type': 'application/json',
-        "auth-token":authToken
+        "auth-token":localStorage.getItem('token')
         },
         body: JSON.stringify({title, description, tag})
     });
-    
     const json = await response.json(); 
-
+    console.log(json);
 
     let newNotes = JSON.parse(JSON.stringify(notes))
     // Logic to edit in client
@@ -80,7 +79,6 @@ const getNotes = async () => {
     }  
     setNotes(newNotes);
 }
-
 
 return (
     <NoteContext.Provider value={{ notes, addNote, deleteNote, editNote, getNotes }}>
